@@ -39,6 +39,7 @@ public class Lox {
             String line = reader.readLine();
             if (line == null) break;
             run(line);
+            // keep running the prompt even if one line has an error
             hadError = false;
         }
     }

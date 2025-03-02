@@ -55,6 +55,7 @@ class Scanner {
     private void scanToken() {
         char c = advance();
         switch (c) {
+            // Tokens with length 1
             case '(': addToken(LEFT_PAREN); break;
             case ')': addToken(RIGHT_PAREN); break;
             case '{': addToken(LEFT_BRACE); break;
@@ -65,6 +66,7 @@ class Scanner {
             case '+': addToken(PLUS); break;
             case ';': addToken(SEMICOLON); break;
             case '*': addToken(STAR); break;
+            // Tokens with length 1 or 2. ! or !=
             case '!':
                 addToken(match('=') ? BANG_EQUAL : BANG);
                 break;
@@ -102,6 +104,7 @@ class Scanner {
                     identifier();
                 } else {
                     //TODO throw a single line of error for all invalid characters to improve user experience
+                    //keep scanning the file and print all the errors, instead of exiting here
                     Lox.error(line, "Unexpected character.");
                 }
                 break;
@@ -111,12 +114,15 @@ class Scanner {
     private void identifier() {
         while (isAlphaNumeric(peek())) advance();
         String text = source.substring(start, current);
+        // Check if the string literal is a keyword
+        // We are not handling case sensitivity here
         TokenType type = keywords.get(text);
         if (type == null) type = IDENTIFIER;
         addToken(type);
     }
 
     private void number() {
+        // to handle all the digits of the number
         while (isDigit(peek())) advance();
 
         // Look for a fractional part.
